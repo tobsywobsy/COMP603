@@ -104,15 +104,28 @@ public class BlackJack {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         gamePanel.setLayout(new BorderLayout());
-        gamePanel.setBackground(new Color(50, 120, 80));
+        gamePanel.setBackground(new Color(50, 120, 80)); //Game background color
         frame.add(gamePanel);
 
-        buttonPanel.setBackground(new Color(50, 50, 50));
+        buttonPanel.setBackground(new Color(50, 50, 50)); //Button panel color
         hitButton.setFocusable(false);
         buttonPanel.add(hitButton);
         stayButton.setFocusable(false);
         buttonPanel.add(stayButton);
         frame.add(buttonPanel, BorderLayout.SOUTH);
+
+        //Hit button
+        hitButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Card card = deck.remove(deck.size ()-1);
+                playerSum += card.getValue();
+                playerAceCount += card.isAce() ? 1 : 0;
+                playerHand.add(card);
+                gamePanel.repaint();
+            }
+        });
+
+        gamePanel.repaint();
     }
     
     //Function for starting the game
