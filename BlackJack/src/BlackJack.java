@@ -68,7 +68,7 @@ public class BlackJack {
             try {
                 //Draw hidden card
                 Image hiddenCardImg = new ImageIcon(getClass().getResource("./cards/BACK.png")).getImage();
-                if (!stayButton.isEnabled()) {
+                if (!standButton.isEnabled()) {
                     hiddenCardImg = new ImageIcon(getClass().getResource(hiddenCard.getImagePath())).getImage();
                 }
                 g.drawImage(hiddenCardImg, 20, 20, cardWidth, cardHeight, null);
@@ -87,10 +87,10 @@ public class BlackJack {
                     g.drawImage(cardImg, 20 + (cardWidth + 10)*i, 320, cardWidth, cardHeight, null);
                 }
 
-                if (!stayButton.isEnabled()) {
+                if (!standButton.isEnabled()) {
                     dealerSum = reduceDealerAce();
                     playerSum = reducePlayerAce();
-                    System.out.println("STAY: ");
+                    System.out.println("Stand:");
                     System.out.println(dealerSum);
                     System.out.println(playerSum);
 
@@ -124,7 +124,7 @@ public class BlackJack {
     };
     JPanel buttonPanel = new JPanel();
     JButton hitButton = new JButton("Hit");
-    JButton stayButton = new JButton("Stay");
+    JButton standButton = new JButton("Stand");
     JButton resetButton = new JButton("Reset");
 
     //Constructor
@@ -144,8 +144,8 @@ public class BlackJack {
         buttonPanel.setBackground(new Color(50, 50, 50)); //Button panel color
         hitButton.setFocusable(false);
         buttonPanel.add(hitButton);
-        stayButton.setFocusable(false);
-        buttonPanel.add(stayButton);
+        standButton.setFocusable(false);
+        buttonPanel.add(standButton);
         resetButton.setFocusable(false);
         buttonPanel.add(resetButton); // Add reset button to the button panel
         frame.add(buttonPanel, BorderLayout.SOUTH);
@@ -166,11 +166,11 @@ public class BlackJack {
             }
         });
 
-        //Stay button
-        stayButton.addActionListener(new ActionListener() {
+        //Stand button
+        standButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 hitButton.setEnabled(false);
-                stayButton.setEnabled(false);
+                standButton.setEnabled(false);
 
                 while (dealerSum < 17) {
                     Card card = deck.remove(deck.size() - 1);
@@ -286,11 +286,11 @@ public class BlackJack {
 
     public void declareLoss() {
         hitButton.setEnabled(false);
-        stayButton.setEnabled(false);
+        standButton.setEnabled(false);
         
         String message = "You Lose!";
         Graphics g = gamePanel.getGraphics();
-        g.setFont(new Font("Comic Sans", Font.PLAIN, 30));
+        g.setFont(new Font("Serif", Font.PLAIN, 30));
         g.setColor(Color.white);
         g.drawString(message, 220, 250);
     }
@@ -310,7 +310,7 @@ public class BlackJack {
 
         // Reset buttons
         hitButton.setEnabled(true);
-        stayButton.setEnabled(true);
+        standButton.setEnabled(true);
 
         // Restart the game
         startGame();
