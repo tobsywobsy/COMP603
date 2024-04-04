@@ -15,12 +15,12 @@ public class BlackJack {
         }
         
         public String toString() {
-            return value+ "-" + type;
+            return value + "-" + type;
         }
 
         public int getValue() {
             if ("AJQK".contains(value)) { //Values A J Q K
-                if (value == "A") {
+                if (value.equals("A")) {
                     return 11;
                 }
                 return 10;
@@ -29,7 +29,7 @@ public class BlackJack {
         }
 
         public boolean isAce() {
-            return value == "A";
+            return value.equals("A");
         }
 
         public String getImagePath() {
@@ -52,8 +52,8 @@ public class BlackJack {
     int playerAceCount;
 
     //Window
-    int boardWidth = 600;
-    int boardHeight = boardWidth;
+    int boardWidth = 700;
+    int boardHeight = 600;
 
     //Card dimensions (1:1.4 ratio for best resolution)
     int cardWidth = 110; 
@@ -114,7 +114,7 @@ public class BlackJack {
 
                     g.setFont(new Font("Comic Sans", Font.PLAIN, 30));
                     g.setColor(Color.white);
-                    g.drawString(message, 220, 250);
+                    g.drawString(message, 275, 250);
                 }
 
             } catch (Exception e) {
@@ -125,6 +125,7 @@ public class BlackJack {
     JPanel buttonPanel = new JPanel();
     JButton hitButton = new JButton("Hit");
     JButton stayButton = new JButton("Stay");
+    JButton resetButton = new JButton("Reset");
 
     //Constructor
     BlackJack() {
@@ -145,35 +146,46 @@ public class BlackJack {
         buttonPanel.add(hitButton);
         stayButton.setFocusable(false);
         buttonPanel.add(stayButton);
+        resetButton.setFocusable(false);
+        buttonPanel.add(resetButton); // Add reset button to the button panel
         frame.add(buttonPanel, BorderLayout.SOUTH);
 
         //Hit button
         hitButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                Card card = deck.remove(deck.size ()-1);
+                Card card = deck.remove(deck.size() - 1);
                 playerSum += card.getValue();
                 playerAceCount += card.isAce() ? 1 : 0;
                 playerHand.add(card);
+                
                 if (reducePlayerAce() > 21) { 
                     hitButton.setEnabled(false);
+                    declareLoss(); //Automatic loss when player busts
                 }
-
                 gamePanel.repaint();
             }
         });
 
+        //Stay button
         stayButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 hitButton.setEnabled(false);
                 stayButton.setEnabled(false);
 
                 while (dealerSum < 17) {
-                    Card card = deck.remove(deck.size()-1);
+                    Card card = deck.remove(deck.size() - 1);
                     dealerSum += card.getValue();
                     dealerAceCount += card.isAce() ? 1 : 0;
                     dealerHand.add(card);
                 }
                 gamePanel.repaint();
+            }
+        });
+
+        //Reset button
+        resetButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                resetGame();
             }
         });
 
@@ -191,11 +203,11 @@ public class BlackJack {
         dealerSum = 0;
         dealerAceCount = 0;
 
-        hiddenCard = deck.remove(deck.size()-1); //Removes card at last index
+        hiddenCard = deck.remove(deck.size() - 1); //Removes card at last index
         dealerSum += hiddenCard.getValue();
         dealerAceCount += hiddenCard.isAce() ? 1 : 0;
 
-        Card card = deck.remove(deck.size()-1);
+        Card card = deck.remove(deck.size() - 1);
         dealerSum += card.getValue();
         dealerAceCount += card.isAce() ? 1 : 0;
         dealerHand.add(card);
@@ -211,8 +223,8 @@ public class BlackJack {
         playerSum = 0;
         playerAceCount = 0;
 
-        for (int i = 0; i <2; i++) {
-            card = deck.remove(deck.size()-1);
+        for (int i = 0; i < 2; i++) {
+            card = deck.remove(deck.size() - 1);
             playerSum += card.getValue();
             playerAceCount += card.isAce() ? 1 : 0;
             playerHand.add(card);
@@ -224,6 +236,8 @@ public class BlackJack {
         System.out.println(playerAceCount);
 
     }
+
+    //Methods
 
     public void buildDeck() {
         deck = new ArrayList<Card>();
@@ -243,7 +257,7 @@ public class BlackJack {
 
     public void shuffleDeck() {
         for (int i = 0; i < deck.size(); i++) {
-            int j =random.nextInt(deck.size());
+            int j = random.nextInt(deck.size());
             Card currentCard = deck.get(i);
             Card randomCard = deck.get(j);
             deck.set(i, randomCard);
@@ -268,5 +282,42 @@ public class BlackJack {
             dealerAceCount -= 1;
         }
         return dealerSum;
+    }
+
+    public void declareLoss() {
+        hitButton.setEnabled(false);
+        stayButton.setEnabled(false);
+        
+        String message = "You Lose!";
+        Graphics g = gamePanel.getGraphics();
+        g.setFont(new Font("Comic Sans", Font.PLAIN, 30));
+        g.setColor(Color.white);
+        g.drawString(message, 220, 250);
+    }
+
+    // Method to reset the game state
+    public void resetGame() {
+        // Reset all variables
+        dealerHand.clear();
+        dealerSum = 0;
+        dealerAceCount = 0;
+
+        hiddenCard = null;
+
+        playerHand.clear();
+        playerSum = 0;
+        playerAceCount = 0;
+
+        // Reset buttons
+        hitButton.setEnabled(true);
+        stayButton.setEnabled(true);
+
+        // Restart the game
+        startGame();
+        gamePanel.repaint();
+    }
+
+    public static void main(String[] args) {
+        new BlackJack();
     }
 }
