@@ -68,6 +68,9 @@ public class BlackJack {
             try {
                 //Draw hidden card
                 Image hiddenCardImg = new ImageIcon(getClass().getResource("./cards/BACK.png")).getImage();
+                if (!stayButton.isEnabled()) {
+                    hiddenCardImg = new ImageIcon(getClass().getResource(hiddenCard.getImagePath())).getImage();
+                }
                 g.drawImage(hiddenCardImg, 20, 20, cardWidth, cardHeight, null);
 
                 //Draw dealer hand
@@ -82,6 +85,36 @@ public class BlackJack {
                     Card card = playerHand.get(i);
                     Image cardImg = new ImageIcon(getClass().getResource(card.getImagePath())).getImage();
                     g.drawImage(cardImg, 20 + (cardWidth + 10)*i, 320, cardWidth, cardHeight, null);
+                }
+
+                if (!stayButton.isEnabled()) {
+                    dealerSum = reduceDealerAce();
+                    playerSum = reducePlayerAce();
+                    System.out.println("STAY: ");
+                    System.out.println(dealerSum);
+                    System.out.println(playerSum);
+
+                    String message = "";
+                    if (playerSum > 21) {
+                        message = "You Lose!";
+                    }
+                    else if (dealerSum > 21) {
+                        message = "You Win!";
+                    }
+                    //Dealer and Player <= 21
+                    else if (playerSum == dealerSum) {
+                        message = "Push.";
+                    }
+                    else if (playerSum > dealerSum) {
+                        message = "You Win!";
+                    }
+                    else if (playerSum < dealerSum) {
+                        message = "You Lose!";
+                    }
+
+                    g.setFont(new Font("Comic Sans", Font.PLAIN, 30));
+                    g.setColor(Color.white);
+                    g.drawString(message, 220, 250);
                 }
 
             } catch (Exception e) {
@@ -121,6 +154,25 @@ public class BlackJack {
                 playerSum += card.getValue();
                 playerAceCount += card.isAce() ? 1 : 0;
                 playerHand.add(card);
+                if (reducePlayerAce() > 21) { 
+                    hitButton.setEnabled(false);
+                }
+
+                gamePanel.repaint();
+            }
+        });
+
+        stayButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                hitButton.setEnabled(false);
+                stayButton.setEnabled(false);
+
+                while (dealerSum < 17) {
+                    Card card = deck.remove(deck.size()-1);
+                    dealerSum += card.getValue();
+                    dealerAceCount += card.isAce() ? 1 : 0;
+                    dealerHand.add(card);
+                }
                 gamePanel.repaint();
             }
         });
@@ -200,5 +252,21 @@ public class BlackJack {
 
         System.out.println("Shuffled Deck:");
         System.out.println(deck);
+    }
+
+    public int reducePlayerAce() {
+        while (playerSum > 21 && playerAceCount > 0) {
+            playerSum -= 10;
+            playerAceCount -= 1;
+        }
+        return playerSum;
+    }
+
+    public int reduceDealerAce() {
+        while (dealerSum > 21 && dealerAceCount > 0) {
+            dealerSum -= 10;
+            dealerAceCount -= 1;
+        }
+        return dealerSum;
     }
 }
