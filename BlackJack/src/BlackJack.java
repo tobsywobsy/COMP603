@@ -112,7 +112,7 @@ public class BlackJack {
                         message = "You Lose!";
                     }
 
-                    g.setFont(new Font("Comic Sans", Font.PLAIN, 30));
+                    g.setFont(new Font("Arial", Font.PLAIN, 30));
                     g.setColor(Color.white);
                     g.drawString(message, 275, 250);
                 }
@@ -290,7 +290,7 @@ public class BlackJack {
         
         String message = "You Lose!";
         Graphics g = gamePanel.getGraphics();
-        g.setFont(new Font("Serif", Font.PLAIN, 30));
+        g.setFont(new Font("Arial", Font.PLAIN, 30));
         g.setColor(Color.white);
         g.drawString(message, 220, 250);
     }
